@@ -4,18 +4,18 @@ using UnityEngine;
 
 public class TheEnemy : MonoBehaviour
 {
-    Transform ball;
+    private Transform ball;
 
     private Transform[] wayPoints = new Transform[4];
     private Vector2[] cornersPositions = new Vector2[4];
 
 
-    int wayPointSteps = 0;
-    float randomAcceleration = 1f;
+    private int wayPointSteps = 0;
+    private float randomAcceleration = 1f;
 
     public GameObject enemyBullet;
 
-    void Start()
+    private void Start()
     {
 
         ball = GameObject.Find("/TheBall").transform;
@@ -53,18 +53,17 @@ public class TheEnemy : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    // void Update(){}
 
 
     private void FixedUpdate() {
 
-       // transform.position = Vector2.Lerp(transform.position, ball.transform.position, Time.deltaTime);
-        
-        EnemyMovement();
+       /*
+        follow the ball
+       transform.position = Vector2.Lerp(transform.position, ball.transform.position, Time.deltaTime);
+       */ 
 
+        EnemyMovement();
 
     }
 
@@ -75,8 +74,8 @@ public class TheEnemy : MonoBehaviour
         if( Vector2.Distance(transform.position, cornersPositions[wayPointSteps]) <= 0 ){
 
             int randomCorner = Random.Range(0, 2);
-            wayPointSteps = (wayPointSteps == 0 || wayPointSteps == 2) ? (randomCorner == 0 ? 1 : 3) : (randomCorner == 0 ? 0 : 2);
-            // wayPointSteps = wayPointSteps < 3 ? wayPointSteps+1 : 0;
+            wayPointSteps = (wayPointSteps == 0 || wayPointSteps == 2) ? (randomCorner == 0 ? 1 : 3) : (randomCorner == 0 ? 0 : 2); // enemy goes to random corner
+            // wayPointSteps = wayPointSteps < 3 ? wayPointSteps+1 : 0; // enemy goes to next corner
 
             randomAcceleration = Random.Range(2f, 5f);
         }
@@ -88,15 +87,15 @@ public class TheEnemy : MonoBehaviour
     {
         while (ball != null)
         {
-            float randomWaitTime = Random.Range(0.5f, 2.5f);
-            yield return new WaitForSeconds(randomWaitTime);
+            float randomDelayTime = Random.Range(0.5f, 2.5f);
+            yield return new WaitForSeconds(randomDelayTime);
             if(ball != null){
 
-                GameObject newBullet = Instantiate (enemyBullet, transform.position, Quaternion.Euler(0,0,0));
-                newBullet.transform.rotation = Quaternion.LookRotation(Vector3.forward, ball.position - newBullet.transform.position);
+                GameObject newBullet = Instantiate (enemyBullet, transform.position, Quaternion.Euler(0,0,0)); // bullet creation
+                newBullet.transform.rotation = Quaternion.LookRotation(Vector3.forward, ball.position - newBullet.transform.position); // set bullet rotation by ball
 
                 Vector2 shootDir = ball.position - transform.position;
-                newBullet.GetComponent<Rigidbody2D>().AddForce(shootDir*1.25f, ForceMode2D.Impulse);
+                newBullet.GetComponent<Rigidbody2D>().AddForce(shootDir*1.25f, ForceMode2D.Impulse); // shoot to ball
 
                 ball.GetComponent<TheBall>().playerPoint++;
             } 
